@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Library Dashboard</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <div class="app-shell">
+            <aside class="sidebar">
+                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
+
+                <div class="brand">
+                    <h1>Library</h1>
+                    <p>Management System</p>
+                </div>
+
+                <nav class="menu">
+                    <button class="menu-item active" data-view="add"><span>Add Books</span></button>
+                    <button class="menu-item" data-view="search"><span>Search Books</span></button>
+                    <button class="menu-item" data-view="delete"><span>Delete Books</span></button>
+                </nav>
+            </aside>
+
+            <main class="content">
+                <section id="add-view" class="view active">
+                    <h2>Add Books</h2>
+                    <div class="form-card">
+                        <input id="title" placeholder="Enter title">
+                        <input id="author" placeholder="Enter author name">
+                        <button onclick="addBook()">Add Book</button>
+                    </div>
+                </section>
+
+                <section id="search-view" class="view">
+                    <h2>Search Books</h2>
+                    <div class="form-card">
+                        <input id="searchInput" placeholder="Search by title or author">
+                        <button onclick="searchBooks()">Search</button>
+                        <div id="bookList" class="book-list"></div>
+                    </div>
+                </section>
+
+                <section id="delete-view" class="view">
+                    <h2>Delete Books</h2>
+                    <div class="form-card">
+                        <button onclick="loadDeleteBooks()">Load Books</button>
+                        <div id="deleteBookList" class="book-list"></div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <p id="message" class="message"></p>
+
+        <script src="script.js"></script>
+    </body>
+</html>
