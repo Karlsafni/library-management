@@ -8,7 +8,7 @@ public class Server {
     private Library library = new Library();
 
     public void start() throws Exception {
-        String host = System.getenv().getOrDefault("HOST", "localhost");
+        String host = System.getenv().getOrDefault("HOST", "0.0.0.0");
         String portValue = System.getenv().getOrDefault("PORT", "8080");
         int port = Integer.parseInt(portValue);
 
