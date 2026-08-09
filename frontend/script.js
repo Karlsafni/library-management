@@ -1,4 +1,4 @@
-const SERVER_URL = (typeof window !== "undefined" && window.__BACKEND_URL__) || "http://localhost:8080";
+const SERVER_URL = (typeof window !== "undefined" && window.__BACKEND_URL__) || "https://library-management-backend-zqf7.onrender.com";
 
 let messageTimeout;
 function showMessage(text) {
