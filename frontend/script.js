@@ -67,7 +67,15 @@ function loadBookList() {
             const table = temp.querySelector(".bookTable");
 
             if (!table) {
-                container.innerHTML = "<p>No books available.</p>";
+                container.innerHTML = `
+                    <table class="bookTable">
+                        <thead>
+                            <tr><th>S.No</th><th>Book Name</th><th>Author Name</th><th>No of Copies</th><th>Borrowed By</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="6" class="empty-table-cell">No books available.</td></tr>
+                        </tbody>
+                    </table>`;
                 return;
             }
 
@@ -77,14 +85,15 @@ function loadBookList() {
                 ? rows.filter(item => item.textContent.toLowerCase().includes(searchVal))
                 : rows;
 
-            if (filtered.length === 0) {
-                container.innerHTML = "<p>No matching books found.</p>";
-                return;
-            }
-
             const updatedTable = table.cloneNode(true);
             const updatedBody = updatedTable.querySelector("tbody");
-            updatedBody.innerHTML = filtered.map(item => item.outerHTML).join("");
+
+            if (filtered.length === 0) {
+                const message = searchVal ? "No matching books found." : "No books available.";
+                updatedBody.innerHTML = `<tr><td colspan="6" class="empty-table-cell">${message}</td></tr>`;
+            } else {
+                updatedBody.innerHTML = filtered.map(item => item.outerHTML).join("");
+            }
             container.innerHTML = updatedTable.outerHTML;
         })
         .catch(error => {
@@ -212,7 +221,15 @@ function loadBorrowerList() {
             const table = temp.querySelector(".bookTable");
 
             if (!table) {
-                container.innerHTML = "<p>No active borrowers.</p>";
+                container.innerHTML = `
+                    <table class="bookTable">
+                        <thead>
+                            <tr><th>S.No</th><th>Borrower's Name</th><th>Book Name</th><th>Author Name</th><th>Start Date</th><th>End Date</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="7" class="empty-table-cell">No active borrowers.</td></tr>
+                        </tbody>
+                    </table>`;
                 return;
             }
 
@@ -222,14 +239,15 @@ function loadBorrowerList() {
                 ? rows.filter(item => item.textContent.toLowerCase().includes(searchVal))
                 : rows;
 
-            if (filtered.length === 0) {
-                container.innerHTML = "<p>No matching borrowers found.</p>";
-                return;
-            }
-
             const updatedTable = table.cloneNode(true);
             const updatedBody = updatedTable.querySelector("tbody");
-            updatedBody.innerHTML = filtered.map(item => item.outerHTML).join("");
+
+            if (filtered.length === 0) {
+                const message = searchVal ? "No matching borrowers found." : "No active borrowers.";
+                updatedBody.innerHTML = `<tr><td colspan="7" class="empty-table-cell">${message}</td></tr>`;
+            } else {
+                updatedBody.innerHTML = filtered.map(item => item.outerHTML).join("");
+            }
             container.innerHTML = updatedTable.outerHTML;
         })
         .catch(error => {
@@ -291,6 +309,18 @@ function attachEventHandlers() {
             }
         };
     }
+
+    const memberList = document.getElementById("memberList");
+    if (memberList) {
+        memberList.onclick = function (event) {
+            const deleteBtn = event.target.closest(".delete-member-btn");
+            if (deleteBtn) {
+                event.preventDefault();
+                deleteMember(deleteBtn.dataset.name, deleteBtn.dataset.phone);
+                return;
+            }
+        };
+    }
 }
 
 function switchView(viewName) {
@@ -309,10 +339,186 @@ function switchView(viewName) {
     }
 }
 
+function addMember() {
+    const nameEl = document.getElementById("memberName");
+    const phoneEl = document.getElementById("memberPhone");
+    const altPhoneEl = document.getElementById("memberAltPhone");
+    const addressEl = document.getElementById("memberAddress");
+
+    if (!nameEl || !phoneEl || !altPhoneEl || !addressEl) return;
+
+    const name = nameEl.value.trim();
+    const phone = phoneEl.value.trim();
+    const altPhone = altPhoneEl.value.trim();
+    const address = addressEl.value.trim();
+
+    if (!name || !phone) {
+        showMessage("Name and Phone Number are required.");
+        return;
+    }
+
+    fetch(SERVER_URL + "/addMember", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, altPhone, address })
+    })
+        .then(response => response.text())
+        .then(text => {
+            showMessage(text);
+            if (text.includes("Successfully")) {
+                nameEl.value = "";
+                phoneEl.value = "";
+                altPhoneEl.value = "";
+                addressEl.value = "";
+                loadMemberList();
+            }
+        })
+        .catch(error => {
+            showMessage("Could not add member.");
+            console.error(error);
+        });
+}
+
+function getMembers() {
+    return fetch(SERVER_URL + "/members")
+        .then(response => response.text());
+}
+
+function loadMemberList() {
+    const searchInput = document.getElementById("memberSearchInput");
+    const searchVal = searchInput ? searchInput.value.trim().toLowerCase() : "";
+    const container = document.getElementById("memberList");
+
+    if (!container) return;
+
+    getMembers()
+        .then(html => {
+            const temp = document.createElement("div");
+            temp.innerHTML = html;
+            const table = temp.querySelector(".bookTable");
+
+            if (!table) {
+                container.innerHTML = `
+                    <table class="bookTable">
+                        <thead>
+                            <tr><th>S.No</th><th>Name</th><th>Phone No</th><th>Alternative Phone No</th><th>Address</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="6" class="empty-table-cell">No active members.</td></tr>
+                        </tbody>
+                    </table>`;
+                return;
+            }
+
+            const rows = Array.from(table.querySelectorAll("tbody .bookItem"));
+
+            const filtered = searchVal
+                ? rows.filter(item => item.textContent.toLowerCase().includes(searchVal))
+                : rows;
+
+            const updatedTable = table.cloneNode(true);
+            const updatedBody = updatedTable.querySelector("tbody");
+
+            if (filtered.length === 0) {
+                const message = searchVal ? "No matching members found." : "No active members.";
+                updatedBody.innerHTML = `<tr><td colspan="6" class="empty-table-cell">${message}</td></tr>`;
+            } else {
+                updatedBody.innerHTML = filtered.map(item => item.outerHTML).join("");
+            }
+            container.innerHTML = updatedTable.outerHTML;
+        })
+        .catch(error => {
+            container.innerHTML = "<p>Could not reach the server.</p>";
+            console.error(error);
+        });
+}
+
+function searchMembers() {
+    loadMemberList();
+}
+
+function deleteMember(name, phone) {
+    if (!confirm(`Are you sure you want to delete member: ${name}?`)) return;
+
+    fetch(SERVER_URL + "/deleteMember", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone })
+    })
+        .then(response => response.text())
+        .then(text => {
+            showMessage(text);
+            loadMemberList();
+        })
+        .catch(error => {
+            showMessage("Could not delete member.");
+            console.error(error);
+        });
+}
+
+function initTheme() {
+    const themeToggle = document.getElementById("themeToggle");
+    if (!themeToggle) return;
+
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    updateThemeIcon(savedTheme);
+
+    themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcon(newTheme);
+    });
+}
+
+function updateThemeIcon(theme) {
+    const themeToggleIcon = document.getElementById("themeToggleIcon");
+    if (!themeToggleIcon) return;
+
+    if (theme === "dark") {
+        themeToggleIcon.innerHTML = `<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>`;
+    } else {
+        themeToggleIcon.innerHTML = `<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>`;
+    }
+}
+
+function openAboutModal() {
+    const modal = document.getElementById("aboutModal");
+    if (modal) {
+        modal.classList.add("show");
+    }
+}
+
+function closeAboutModal() {
+    const modal = document.getElementById("aboutModal");
+    if (modal) {
+        modal.classList.remove("show");
+    }
+}
+
 window.addEventListener("DOMContentLoaded", () => {
+    initTheme();
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const aboutToggle = document.getElementById('aboutToggle');
+
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+    }
+
+    if (aboutToggle) {
+        aboutToggle.addEventListener('click', openAboutModal);
+    }
+
     document.querySelectorAll('.menu-item').forEach(button => {
         button.addEventListener('click', () => {
             const viewName = button.dataset.view;
+            if (!viewName) return; // Do not switch views for the toggle button
             switchView(viewName);
             if (viewName === 'books') {
                 const searchInput = document.getElementById("searchInput");
@@ -322,6 +528,10 @@ window.addEventListener("DOMContentLoaded", () => {
                 const bSearchInput = document.getElementById("borrowerSearchInput");
                 if (bSearchInput) bSearchInput.value = "";
                 loadBorrowerList();
+            } else if (viewName === 'members') {
+                const mSearchInput = document.getElementById("memberSearchInput");
+                if (mSearchInput) mSearchInput.value = "";
+                loadMemberList();
             }
         });
     });
@@ -329,4 +539,5 @@ window.addEventListener("DOMContentLoaded", () => {
     attachEventHandlers();
     loadBookList();
     loadBorrowerList();
+    loadMemberList();
 });

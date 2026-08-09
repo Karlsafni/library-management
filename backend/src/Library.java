@@ -34,4 +34,18 @@ public class Library {
     public void removeBorrower(String name, String title, String author) {
         borrowers.removeIf(b -> name.equals(b.getName()) && title.equals(b.getBookTitle()) && author.equals(b.getBookAuthor()));
     }
+
+    private List<Member> members = new ArrayList<>();
+
+    public void addMember(Member member) {
+        members.add(member);
+    }
+
+    public void removeMember(String name, String phone) {
+        members.removeIf(m -> name.equals(m.getName()) && phone.equals(m.getPhone()));
+    }
+
+    public List<Member> getMembers() {
+        return members;
+    }
 }
