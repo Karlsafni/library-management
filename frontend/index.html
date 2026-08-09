@@ -77,6 +77,32 @@
 
         <div id="message" class="message"></div>
 
+        <!-- Modern Borrow Dialog Modal -->
+        <div id="borrowModal" class="modal">
+            <div class="modal-content form-card">
+                <h3>Borrow Book</h3>
+                <p id="borrowModalBookInfo" class="modal-subtitle"></p>
+                <div class="form-group">
+                    <label for="borrowerNameInput">Borrower's Name</label>
+                    <input id="borrowerNameInput" placeholder="Enter borrower name (e.g. John Doe)">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="borrowStartDate">Start Date</label>
+                        <input id="borrowStartDate" type="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="borrowEndDate">End Date</label>
+                        <input id="borrowEndDate" type="date">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button onclick="closeBorrowModal()" class="secondary-btn">Cancel</button>
+                    <button onclick="submitBorrowForm()" class="primary-btn">Borrow Book</button>
+                </div>
+            </div>
+        </div>
+
         <script src="script.js"></script>
     </body>
 </html>

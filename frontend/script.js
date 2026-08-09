@@ -1,4 +1,4 @@
-const SERVER_URL = (typeof window !== "undefined" && window.__BACKEND_URL__) || "https://library-backend-9r9n.onrender.com";
+const SERVER_URL = (typeof window !== "undefined" && window.__BACKEND_URL__) || "http://localhost:8080";
 
 let messageTimeout;
 function showMessage(text) {
@@ -115,24 +115,75 @@ function deleteBook(title, author) {
         });
 }
 
+let activeBorrowTitle = "";
+let activeBorrowAuthor = "";
+
 function borrowBook(title, author) {
-    const borrower = prompt("Enter borrower's name:");
-    if (borrower === null) return; // cancelled prompt
+    activeBorrowTitle = title;
+    activeBorrowAuthor = author;
     
-    const borrowerTrimmed = borrower.trim();
-    if (!borrowerTrimmed) {
-        showMessage("Borrower name cannot be empty.");
+    const modal = document.getElementById("borrowModal");
+    const modalInfo = document.getElementById("borrowModalBookInfo");
+    if (modal) {
+        if (modalInfo) {
+            modalInfo.textContent = `Book: "${title}" by ${author}`;
+        }
+        
+        // Set default start date to today
+        const startDateInput = document.getElementById("borrowStartDate");
+        if (startDateInput && !startDateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            startDateInput.value = today;
+        }
+        
+        modal.classList.add("show");
+    }
+}
+
+function closeBorrowModal() {
+    const modal = document.getElementById("borrowModal");
+    if (modal) {
+        modal.classList.remove("show");
+        
+        // Clear fields
+        document.getElementById("borrowerNameInput").value = "";
+        document.getElementById("borrowStartDate").value = "";
+        document.getElementById("borrowEndDate").value = "";
+        
+        activeBorrowTitle = "";
+        activeBorrowAuthor = "";
+    }
+}
+
+function submitBorrowForm() {
+    const borrower = document.getElementById("borrowerNameInput").value.trim();
+    const startDate = document.getElementById("borrowStartDate").value;
+    const endDate = document.getElementById("borrowEndDate").value;
+
+    if (!borrower) {
+        showMessage("Please enter the borrower's name.");
+        return;
+    }
+    if (!startDate || !endDate) {
+        showMessage("Please select both start and end dates.");
         return;
     }
 
     fetch(SERVER_URL + "/borrowBook", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: title, author: author, borrower: borrowerTrimmed })
+        body: JSON.stringify({
+            title: activeBorrowTitle,
+            author: activeBorrowAuthor,
+            borrower: borrower,
+            startDate: startDate,
+            endDate: endDate
+        })
     })
         .then(response => response.text())
         .then(text => {
             showMessage(text);
+            closeBorrowModal();
             loadBookList();
             loadBorrowerList();
         })

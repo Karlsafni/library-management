@@ -55,13 +55,21 @@ public class Server {
 
             StringBuilder html = new StringBuilder();
             html.append("<table class='bookTable'><thead><tr><th>Book Name</th><th>Author Name</th>");
-            html.append("<th>No of Copies</th><th>Action</th></tr></thead><tbody>");
+            html.append("<th>No of Copies</th><th>Borrowed By</th><th>Action</th></tr></thead><tbody>");
 
             for (Book book : library.getBooks()) {
+                int borrowedCount = 0;
+                for (Borrower b : library.getBorrowers()) {
+                    if (b.getBookTitle().equals(book.getTitle()) && b.getBookAuthor().equals(book.getAuthor())) {
+                        borrowedCount++;
+                    }
+                }
+
                 html.append("<tr class='bookItem'>")
                         .append("<td>").append(escapeHtml(book.getTitle())).append("</td>")
                         .append("<td>").append(escapeHtml(book.getAuthor())).append("</td>")
-                        .append("<td>").append(book.getCopies()).append("</td>");
+                        .append("<td>").append(book.getCopies()).append("</td>")
+                        .append("<td>").append(borrowedCount).append(" ").append(borrowedCount == 1 ? "person" : "persons").append("</td>");
 
                 html.append("<td><button type='button' class='borrow-book-btn' data-title='")
                         .append(escapeHtml(book.getTitle()))
@@ -115,6 +123,8 @@ public class Server {
             String title = extractValue(body, "title");
             String author = extractValue(body, "author");
             String borrower = extractValue(body, "borrower");
+            String startDate = extractValue(body, "startDate");
+            String endDate = extractValue(body, "endDate");
 
             if (borrower.isEmpty()) {
                 sendResponse(exchange, "Borrower name is required.");
@@ -140,7 +150,7 @@ public class Server {
             }
 
             targetBook.setCopies(targetBook.getCopies() - 1);
-            library.addBorrower(new Borrower(borrower, title, author));
+            library.addBorrower(new Borrower(borrower, title, author, startDate, endDate));
 
             sendResponse(exchange, "Book Borrowed Successfully");
         });
@@ -157,13 +167,15 @@ public class Server {
 
             StringBuilder html = new StringBuilder();
             html.append("<table class='bookTable'><thead><tr><th>Borrower's Name</th><th>Book Name</th>");
-            html.append("<th>Author Name</th><th>Action</th></tr></thead><tbody>");
+            html.append("<th>Author Name</th><th>Start Date</th><th>End Date</th><th>Action</th></tr></thead><tbody>");
 
             for (Borrower b : library.getBorrowers()) {
                 html.append("<tr class='bookItem'>")
                         .append("<td>").append(escapeHtml(b.getName())).append("</td>")
                         .append("<td>").append(escapeHtml(b.getBookTitle())).append("</td>")
-                        .append("<td>").append(escapeHtml(b.getBookAuthor())).append("</td>");
+                        .append("<td>").append(escapeHtml(b.getBookAuthor())).append("</td>")
+                        .append("<td>").append(escapeHtml(b.getStartDate())).append("</td>")
+                        .append("<td>").append(escapeHtml(b.getEndDate())).append("</td>");
 
                 html.append("<td><button type='button' class='return-book-btn' data-borrower='")
                         .append(escapeHtml(b.getName()))
