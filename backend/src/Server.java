@@ -28,8 +28,17 @@ public class Server {
 
             String title = extractValue(body, "title");
             String author = extractValue(body, "author");
+            String copiesStr = extractValue(body, "copies");
+            int copies = 1;
+            try {
+                if (!copiesStr.isEmpty()) {
+                    copies = Integer.parseInt(copiesStr);
+                }
+            } catch (NumberFormatException e) {
+                // default to 1
+            }
 
-            library.addBook(new Book(title, author));
+            library.addBook(new Book(title, author, copies));
 
             sendResponse(exchange, "Book Added Successfully");
         });
@@ -46,14 +55,20 @@ public class Server {
 
             StringBuilder html = new StringBuilder();
             html.append("<table class='bookTable'><thead><tr><th>Book Name</th><th>Author Name</th>");
-            html.append("<th>Action</th></tr></thead><tbody>");
+            html.append("<th>No of Copies</th><th>Action</th></tr></thead><tbody>");
 
             for (Book book : library.getBooks()) {
                 html.append("<tr class='bookItem'>")
                         .append("<td>").append(escapeHtml(book.getTitle())).append("</td>")
-                        .append("<td>").append(escapeHtml(book.getAuthor())).append("</td>");
+                        .append("<td>").append(escapeHtml(book.getAuthor())).append("</td>")
+                        .append("<td>").append(book.getCopies()).append("</td>");
 
-                html.append("<td><button type='button' class='delete-book-btn' data-title='")
+                html.append("<td><button type='button' class='borrow-book-btn' data-title='")
+                        .append(escapeHtml(book.getTitle()))
+                        .append("' data-author='").append(escapeHtml(book.getAuthor()))
+                        .append("'>Borrow</button> ");
+
+                html.append("<button type='button' class='delete-book-btn' data-title='")
                         .append(escapeHtml(book.getTitle()))
                         .append("' data-author='").append(escapeHtml(book.getAuthor()))
                         .append("'>Delete</button></td></tr>");
@@ -84,6 +99,120 @@ public class Server {
 
             library.removeBook(title, author);
             sendResponse(exchange, "Book Deleted Successfully");
+        });
+
+        server.createContext("/borrowBook", exchange -> {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                exchange.sendResponseHeaders(204, 0);
+                exchange.close();
+                return;
+            }
+
+            String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            String title = extractValue(body, "title");
+            String author = extractValue(body, "author");
+            String borrower = extractValue(body, "borrower");
+
+            if (borrower.isEmpty()) {
+                sendResponse(exchange, "Borrower name is required.");
+                return;
+            }
+
+            Book targetBook = null;
+            for (Book b : library.getBooks()) {
+                if (b.getTitle().equals(title) && b.getAuthor().equals(author)) {
+                    targetBook = b;
+                    break;
+                }
+            }
+
+            if (targetBook == null) {
+                sendResponse(exchange, "Book not found.");
+                return;
+            }
+
+            if (targetBook.getCopies() <= 0) {
+                sendResponse(exchange, "No copies available to borrow.");
+                return;
+            }
+
+            targetBook.setCopies(targetBook.getCopies() - 1);
+            library.addBorrower(new Borrower(borrower, title, author));
+
+            sendResponse(exchange, "Book Borrowed Successfully");
+        });
+
+        server.createContext("/borrowers", exchange -> {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                exchange.sendResponseHeaders(204, 0);
+                exchange.close();
+                return;
+            }
+
+            StringBuilder html = new StringBuilder();
+            html.append("<table class='bookTable'><thead><tr><th>Borrower's Name</th><th>Book Name</th>");
+            html.append("<th>Author Name</th><th>Action</th></tr></thead><tbody>");
+
+            for (Borrower b : library.getBorrowers()) {
+                html.append("<tr class='bookItem'>")
+                        .append("<td>").append(escapeHtml(b.getName())).append("</td>")
+                        .append("<td>").append(escapeHtml(b.getBookTitle())).append("</td>")
+                        .append("<td>").append(escapeHtml(b.getBookAuthor())).append("</td>");
+
+                html.append("<td><button type='button' class='return-book-btn' data-borrower='")
+                        .append(escapeHtml(b.getName()))
+                        .append("' data-title='").append(escapeHtml(b.getBookTitle()))
+                        .append("' data-author='").append(escapeHtml(b.getBookAuthor()))
+                        .append("'>Return</button></td></tr>");
+            }
+
+            html.append("</tbody></table>");
+
+            if (library.getBorrowers().isEmpty()) {
+                html.append("<p>No borrowers active.</p>");
+            }
+
+            sendResponse(exchange, html.toString());
+        });
+
+        server.createContext("/returnBook", exchange -> {
+            if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
+                exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
+                exchange.sendResponseHeaders(204, 0);
+                exchange.close();
+                return;
+            }
+
+            String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            String title = extractValue(body, "title");
+            String author = extractValue(body, "author");
+            String borrower = extractValue(body, "borrower");
+
+            library.removeBorrower(borrower, title, author);
+
+            Book targetBook = null;
+            for (Book b : library.getBooks()) {
+                if (b.getTitle().equals(title) && b.getAuthor().equals(author)) {
+                    targetBook = b;
+                    break;
+                }
+            }
+
+            if (targetBook != null) {
+                targetBook.setCopies(targetBook.getCopies() + 1);
+            } else {
+                library.addBook(new Book(title, author, 1));
+            }
+
+            sendResponse(exchange, "Book Returned Successfully");
         });
 
         server.start();

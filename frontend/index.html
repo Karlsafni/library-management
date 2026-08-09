@@ -4,55 +4,78 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Library Dashboard</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div class="app-shell">
             <aside class="sidebar">
-                <button id="sidebarToggle" class="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
-
-                <div class="brand">
-                    <h1>Library</h1>
-                    <p>Management System</p>
-                </div>
-
                 <nav class="menu">
-                    <button class="menu-item active" data-view="add"><span>Add Books</span></button>
-                    <button class="menu-item" data-view="search"><span>Search Books</span></button>
-                    <button class="menu-item" data-view="delete"><span>Delete Books</span></button>
+                    <button class="menu-item active" data-view="add">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                        <span>Add Books</span>
+                    </button>
+                    <button class="menu-item" data-view="books">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                        <span>Book List</span>
+                    </button>
+                    <button class="menu-item" data-view="borrowers">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>Borrowers</span>
+                    </button>
                 </nav>
             </aside>
 
-            <main class="content">
-                <section id="add-view" class="view active">
-                    <h2>Add Books</h2>
-                    <div class="form-card">
-                        <input id="title" placeholder="Enter title">
-                        <input id="author" placeholder="Enter author name">
-                        <button onclick="addBook()">Add Book</button>
-                    </div>
-                </section>
+            <div class="app-container">
+                <header class="header">
+                    <span class="app-title">Library Management System</span>
+                </header>
 
-                <section id="search-view" class="view">
-                    <h2>Search Books</h2>
-                    <div class="form-card">
-                        <input id="searchInput" placeholder="Search by title or author">
-                        <button onclick="searchBooks()">Search</button>
-                        <div id="bookList" class="book-list"></div>
-                    </div>
-                </section>
+                <main class="content">
+                    <section id="add-view" class="view active">
+                        <div class="form-card">
+                            <div class="form-group">
+                                <label for="title">Book Title</label>
+                                <input id="title" placeholder="Enter title (e.g., The Great Gatsby)">
+                            </div>
+                            <div class="form-group">
+                                <label for="author">Author Name</label>
+                                <input id="author" placeholder="Enter author name (e.g., F. Scott Fitzgerald)">
+                            </div>
+                            <div class="form-group">
+                                <label for="copies">Number of Copies</label>
+                                <input id="copies" type="number" min="1" value="1" placeholder="Enter number of copies (e.g., 5)">
+                            </div>
+                            <button onclick="addBook()" class="primary-btn">Add Book</button>
+                        </div>
+                    </section>
 
-                <section id="delete-view" class="view">
-                    <h2>Delete Books</h2>
-                    <div class="form-card">
-                        <button onclick="loadDeleteBooks()">Load Books</button>
-                        <div id="deleteBookList" class="book-list"></div>
-                    </div>
-                </section>
-            </main>
+                    <section id="books-view" class="view">
+                        <div class="form-card list-card">
+                            <div class="search-bar-container">
+                                <input id="searchInput" placeholder="Search by title or author..." oninput="searchBooks()">
+                                <button onclick="searchBooks()" class="primary-btn">Search</button>
+                            </div>
+                            <div id="bookList" class="book-list"></div>
+                        </div>
+                    </section>
+
+                    <section id="borrowers-view" class="view">
+                        <div class="form-card list-card">
+                            <div class="search-bar-container">
+                                <input id="borrowerSearchInput" placeholder="Search by borrower or book..." oninput="searchBorrowers()">
+                                <button onclick="searchBorrowers()" class="primary-btn">Search</button>
+                            </div>
+                            <div id="borrowerList" class="book-list"></div>
+                        </div>
+                    </section>
+                </main>
+            </div>
         </div>
 
-        <p id="message" class="message"></p>
+        <div id="message" class="message"></div>
 
         <script src="script.js"></script>
     </body>
