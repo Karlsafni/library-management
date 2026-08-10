@@ -3,6 +3,7 @@ FROM maven:3.8.5-openjdk-17-slim AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
+COPY db ./db
 RUN mvn clean package -DskipTests
 
 # Stage 2: Run the application
