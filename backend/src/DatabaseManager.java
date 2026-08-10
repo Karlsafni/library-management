@@ -40,15 +40,27 @@ public class DatabaseManager {
                     props.setProperty("user", user);
                     props.setProperty("password", password);
                     
-                    // Render/cloud deployments usually require SSL.
-                    props.setProperty("ssl", "true");
-                    props.setProperty("sslfactory", "org.postgresql.ssl.NonValidatingFactory");
+                    // Render internal database hostnames do not contain a dot '.'
+                    // e.g. "dpg-d9sun8qfngtc7384dm30-a" has no dot, while external hostnames do
+                    String hostname = hostAndDb.split("/")[0];
+                    boolean isInternal = !hostname.contains(".");
+
+                    if (!isInternal) {
+                        props.setProperty("ssl", "true");
+                        props.setProperty("sslmode", "require");
+                        props.setProperty("sslfactory", "org.postgresql.ssl.NonValidatingFactory");
+                    }
 
                     return DriverManager.getConnection(jdbcUrl, props);
                 }
             } catch (Exception e) {
-                System.err.println("Error parsing DATABASE_URL, attempting raw connection: " + e.getMessage());
+                System.err.println("Error parsing DATABASE_URL: " + e.getMessage());
             }
+            
+            // Fallback: If parsing fails, try converting the URL schema prefix
+            String convertedUrl = dbUrl.replaceFirst("postgres://", "jdbc:postgresql://")
+                                       .replaceFirst("postgresql://", "jdbc:postgresql://");
+            return DriverManager.getConnection(convertedUrl);
         }
 
         return DriverManager.getConnection(dbUrl);
