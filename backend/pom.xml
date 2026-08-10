@@ -45,7 +45,7 @@
                             <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
-                </archive>
+                </configuration>
                 <executions>
                     <execution>
                         <id>make-assembly</id>
