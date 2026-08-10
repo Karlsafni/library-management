@@ -1,6 +1,26 @@
 const SERVER_URL = (typeof window !== "undefined" && window.__BACKEND_URL__) || "https://library-management-backend-zqf7.onrender.com";
 
 let messageTimeout;
+
+// Initialize Custom Select events
+document.addEventListener("DOMContentLoaded", () => {
+    const container = document.getElementById("borrowerSelectContainer");
+    const trigger = document.getElementById("borrowerSelectTrigger");
+    
+    if (trigger && container) {
+        trigger.addEventListener("click", (e) => {
+            e.stopPropagation();
+            container.classList.toggle("open");
+        });
+    }
+
+    // Close dropdowns on clicking outside
+    document.addEventListener("click", () => {
+        if (container) {
+            container.classList.remove("open");
+        }
+    });
+});
 function showMessage(text) {
     const msgEl = document.getElementById("message");
     if (!msgEl) return;
@@ -145,6 +165,62 @@ function borrowBook(title, author) {
             startDateInput.value = today;
         }
         
+        // Populate custom select options
+        const selectContainer = document.getElementById("borrowerSelectContainer");
+        const selectTrigger = document.getElementById("borrowerSelectTrigger");
+        const selectOptions = document.getElementById("borrowerSelectOptions");
+        const hiddenInput = document.getElementById("borrowerNameInput");
+        
+        if (selectTrigger && selectOptions && hiddenInput) {
+            // Reset state
+            selectTrigger.querySelector("span").textContent = "-- Select Member --";
+            hiddenInput.value = "";
+            selectOptions.innerHTML = '<div class="custom-select-option disabled">Loading members...</div>';
+            
+            getMembers()
+                .then(html => {
+                    const temp = document.createElement("div");
+                    temp.innerHTML = html;
+                    const rows = temp.querySelectorAll("tbody .bookItem");
+                    
+                    let optionsHtml = '';
+                    rows.forEach(row => {
+                        const tds = row.querySelectorAll("td");
+                        if (tds.length > 1) {
+                            const name = tds[1].textContent.trim();
+                            optionsHtml += `<div class="custom-select-option" data-value="${name}">${name}</div>`;
+                        }
+                    });
+                    
+                    if (rows.length === 0) {
+                        selectOptions.innerHTML = '<div class="custom-select-option disabled">No members registered. Please add a member first.</div>';
+                    } else {
+                        selectOptions.innerHTML = optionsHtml;
+                        
+                        // Add click event listeners to custom options
+                        const options = selectOptions.querySelectorAll(".custom-select-option");
+                        options.forEach(opt => {
+                            opt.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                const val = opt.getAttribute("data-value");
+                                hiddenInput.value = val;
+                                selectTrigger.querySelector("span").textContent = val;
+                                
+                                // Highlight selected
+                                options.forEach(o => o.classList.remove("selected"));
+                                opt.classList.add("selected");
+                                
+                                selectContainer.classList.remove("open");
+                            });
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading members for custom select:", error);
+                    selectOptions.innerHTML = '<div class="custom-select-option disabled">Failed to load members</div>';
+                });
+        }
+        
         modal.classList.add("show");
     }
 }
@@ -153,6 +229,12 @@ function closeBorrowModal() {
     const modal = document.getElementById("borrowModal");
     if (modal) {
         modal.classList.remove("show");
+        
+        // Clear custom select
+        const selectContainer = document.getElementById("borrowerSelectContainer");
+        const selectTrigger = document.getElementById("borrowerSelectTrigger");
+        if (selectContainer) selectContainer.classList.remove("open");
+        if (selectTrigger) selectTrigger.querySelector("span").textContent = "-- Select Member --";
         
         // Clear fields
         document.getElementById("borrowerNameInput").value = "";

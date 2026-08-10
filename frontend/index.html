@@ -144,8 +144,15 @@
                 <h3>Borrow Book</h3>
                 <p id="borrowModalBookInfo" class="modal-subtitle"></p>
                 <div class="form-group">
-                    <label for="borrowerNameInput">Borrower's Name</label>
-                    <input id="borrowerNameInput" placeholder="Enter borrower name (e.g. John Doe)">
+                    <label for="borrowerSelectTrigger">Borrower's Name</label>
+                    <div id="borrowerSelectContainer" class="custom-select-container">
+                        <div id="borrowerSelectTrigger" class="custom-select-trigger">
+                            <span>-- Select Member --</span>
+                            <svg class="chevron-icon" fill="currentColor" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+                        </div>
+                        <div id="borrowerSelectOptions" class="custom-select-options"></div>
+                        <input type="hidden" id="borrowerNameInput" value="">
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
