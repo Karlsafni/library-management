@@ -154,6 +154,10 @@ body {
     pointer-events: none;
 }
 
+.mobile-label {
+    display: none;
+}
+
 .menu-item:hover {
     background-color: var(--bg-hover);
     color: var(--text-main);
@@ -1158,6 +1162,14 @@ span.flatpickr-weekday {
         pointer-events: auto !important;
         font-size: 0.72rem !important;
         font-weight: 700;
+    }
+
+    .desktop-label {
+        display: none !important;
+    }
+
+    .mobile-label {
+        display: inline !important;
     }
 
     /* Adjust main content padding and ensure scrollbar clearance */
