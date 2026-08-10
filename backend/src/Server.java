@@ -129,28 +129,8 @@ public class Server {
                 return;
             }
 
-            Book targetBook = null;
-            for (Book b : library.getBooks()) {
-                if (b.getTitle().equals(title) && b.getAuthor().equals(author)) {
-                    targetBook = b;
-                    break;
-                }
-            }
-
-            if (targetBook == null) {
-                sendResponse(exchange, "Book not found.");
-                return;
-            }
-
-            if (targetBook.getCopies() <= 0) {
-                sendResponse(exchange, "No copies available to borrow.");
-                return;
-            }
-
-            targetBook.setCopies(targetBook.getCopies() - 1);
-            library.addBorrower(new Borrower(borrower, title, author, startDate, endDate));
-
-            sendResponse(exchange, "Book Borrowed Successfully");
+            String result = library.borrowBook(borrower, title, author, startDate, endDate);
+            sendResponse(exchange, result);
         });
 
         server.createContext("/borrowers", exchange -> {
@@ -204,22 +184,7 @@ public class Server {
             String author = extractValue(body, "author");
             String borrower = extractValue(body, "borrower");
 
-            library.removeBorrower(borrower, title, author);
-
-            Book targetBook = null;
-            for (Book b : library.getBooks()) {
-                if (b.getTitle().equals(title) && b.getAuthor().equals(author)) {
-                    targetBook = b;
-                    break;
-                }
-            }
-
-            if (targetBook != null) {
-                targetBook.setCopies(targetBook.getCopies() + 1);
-            } else {
-                library.addBook(new Book(title, author, 1));
-            }
-
+            library.returnBook(borrower, title, author);
             sendResponse(exchange, "Book Returned Successfully");
         });
 
