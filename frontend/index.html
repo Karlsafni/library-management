@@ -63,9 +63,16 @@
 
                 <main class="content">
                     <section id="add-view" class="view active">
+                        <div class="welcome-header">
+                            <h2 id="welcomeMessage">Welcome!</h2>
+                            <p class="welcome-subtitle">Manage your library's books and members inventory.</p>
+                        </div>
                         <div class="add-forms-container">
                             <div class="form-card">
-                                <h3>Add New Book</h3>
+                                <div class="form-card-header">
+                                    <h3>Add New Book</h3>
+                                    <span class="count-badge">Total Books: <span id="totalBooksCount">0</span></span>
+                                </div>
                                 <div class="form-group">
                                     <label for="title">Book Title</label>
                                     <input id="title" placeholder="Enter title (e.g., The Great Gatsby)">
@@ -82,7 +89,10 @@
                             </div>
 
                             <div class="form-card">
-                                <h3>Add New Member</h3>
+                                <div class="form-card-header">
+                                    <h3>Add New Member</h3>
+                                    <span class="count-badge">Total Members: <span id="totalMembersCount">0</span></span>
+                                </div>
                                 <div class="form-group">
                                     <label for="memberName">Member Name</label>
                                     <input id="memberName" placeholder="Enter name (e.g., John Doe)">
@@ -108,7 +118,12 @@
                         <div class="form-card list-card">
                             <div class="search-bar-container">
                                 <input id="searchInput" placeholder="Search by title or author..." oninput="searchBooks()">
-                                <button onclick="searchBooks()" class="primary-btn">Search</button>
+                                <button onclick="searchBooks()" class="search-btn" aria-label="Search">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                </button>
                             </div>
                             <div id="bookList" class="book-list"></div>
                         </div>
@@ -118,7 +133,12 @@
                         <div class="form-card list-card">
                             <div class="search-bar-container">
                                 <input id="borrowerSearchInput" placeholder="Search by borrower or book..." oninput="searchBorrowers()">
-                                <button onclick="searchBorrowers()" class="primary-btn">Search</button>
+                                <button onclick="searchBorrowers()" class="search-btn" aria-label="Search">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                </button>
                             </div>
                             <div id="borrowerList" class="book-list"></div>
                         </div>
@@ -128,7 +148,12 @@
                         <div class="form-card list-card">
                             <div class="search-bar-container">
                                 <input id="memberSearchInput" placeholder="Search by name, phone or address..." oninput="searchMembers()">
-                                <button onclick="searchMembers()" class="primary-btn">Search</button>
+                                <button onclick="searchMembers()" class="search-btn" aria-label="Search">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                </button>
                             </div>
                             <div id="memberList" class="book-list"></div>
                         </div>

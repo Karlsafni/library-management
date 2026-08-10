@@ -34,7 +34,25 @@ document.addEventListener("DOMContentLoaded", () => {
             monthSelectorType: "static"
         });
     }
+    updateWelcomeMessage();
 });
+
+function updateWelcomeMessage() {
+    const welcomeEl = document.getElementById("welcomeMessage");
+    if (!welcomeEl) return;
+    
+    const hours = new Date().getHours();
+    let greeting = "Good Evening";
+    
+    if (hours >= 5 && hours < 12) {
+        greeting = "Good Morning";
+    } else if (hours >= 12 && hours < 17) {
+        greeting = "Good Afternoon";
+    }
+    
+    welcomeEl.textContent = greeting + "!";
+}
+
 function showMessage(text) {
     const msgEl = document.getElementById("message");
     if (!msgEl) return;
@@ -110,10 +128,28 @@ function loadBookList() {
                             <tr><td colspan="6" class="empty-table-cell">No books available.</td></tr>
                         </tbody>
                     </table>`;
+                const booksCountEl = document.getElementById("totalBooksCount");
+                if (booksCountEl) booksCountEl.textContent = "0";
                 return;
             }
 
             const rows = Array.from(table.querySelectorAll("tbody .bookItem"));
+            
+            // Calculate total books (sum of copies)
+            let totalCopies = 0;
+            rows.forEach(row => {
+                const tds = row.querySelectorAll("td");
+                if (tds.length > 3) {
+                    const count = parseInt(tds[3].textContent.trim(), 10);
+                    if (!isNaN(count)) {
+                        totalCopies += count;
+                    }
+                }
+            });
+            const booksCountEl = document.getElementById("totalBooksCount");
+            if (booksCountEl) {
+                booksCountEl.textContent = totalCopies;
+            }
             
             const filtered = searchVal 
                 ? rows.filter(item => item.textContent.toLowerCase().includes(searchVal))
@@ -503,10 +539,18 @@ function loadMemberList() {
                             <tr><td colspan="6" class="empty-table-cell">No active members.</td></tr>
                         </tbody>
                     </table>`;
+                const membersCountEl = document.getElementById("totalMembersCount");
+                if (membersCountEl) membersCountEl.textContent = "0";
                 return;
             }
 
             const rows = Array.from(table.querySelectorAll("tbody .bookItem"));
+            
+            // Calculate total members
+            const membersCountEl = document.getElementById("totalMembersCount");
+            if (membersCountEl) {
+                membersCountEl.textContent = rows.length;
+            }
 
             const filtered = searchVal
                 ? rows.filter(item => item.textContent.toLowerCase().includes(searchVal))

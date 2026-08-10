@@ -298,6 +298,29 @@ h2 {
     width: 100%;
 }
 
+.form-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.form-card-header h3 {
+    margin-bottom: 0 !important;
+}
+
+.count-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    background-color: var(--primary-light);
+    color: var(--primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
 .list-card {
     max-width: 100%;
     flex: 1;
@@ -499,10 +522,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     margin: 0;
 }
 
-.search-bar-container button {
-    width: auto;
-    margin: 0;
-    padding: 0 28px;
+.search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0 !important;
+    border: none;
+    border-radius: var(--radius-md);
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.search-btn:hover {
+    background-color: var(--primary-hover);
+    color: var(--text-on-primary);
+}
+
+.search-btn svg {
+    width: 20px;
+    height: 20px;
 }
 
 /* Delete view specific styles */
@@ -858,6 +900,25 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-weight: 600;
     color: var(--text-empty);
     background-color: var(--bg-card) !important;
+}
+
+/* Welcome Header styles */
+.welcome-header {
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.welcome-header h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+
+.welcome-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
 }
 
 /* Add forms side-by-side flex container */
