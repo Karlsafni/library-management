@@ -74,8 +74,14 @@ public class DatabaseManager {
             try (Connection conn = getConnection();
                  Statement stmt = conn.createStatement()) {
                 
-                // Execute schema creation
-                stmt.execute(schemaSql);
+                // Split SQL by semicolon and execute each statement individually
+                String[] queries = schemaSql.split(";");
+                for (String query : queries) {
+                    String trimmedQuery = query.trim();
+                    if (!trimmedQuery.isEmpty()) {
+                        stmt.execute(trimmedQuery);
+                    }
+                }
                 System.out.println("Database schema initialized successfully.");
                 
             } catch (SQLException e) {
