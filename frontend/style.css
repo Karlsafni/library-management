@@ -32,6 +32,7 @@
     
     --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --bg-overlay: rgba(0, 0, 0, 0.35);
 }
 
 /* Dark Theme Overrides (Inspired by NVIDIA) */
@@ -52,6 +53,7 @@
     --text-empty: #94a3b8;       /* Soft slate gray - not too light */
     
     --primary-light: #162400;    /* Dark olive wash */
+    --bg-overlay: rgba(0, 0, 0, 0.75);
 }
 
 * {
@@ -433,6 +435,32 @@ input:focus, select:focus {
     background-color: transparent;
 }
 
+/* Custom Date Inputs & Calendar Icon Styling */
+input[type="date"] {
+    position: relative;
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%2376b900' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm-5-7h-5v5h5v-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 20px;
+    cursor: pointer;
+}
+
+/* Hide default browser indicator while stretching it to cover the entire input */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
 /* Buttons */
 .primary-btn {
     width: 100%;
@@ -616,7 +644,7 @@ input:focus, select:focus {
     border: 1px solid var(--border-color);
     border-left: 5px solid var(--primary); /* Green brand indicator strip */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 3000;
     font-weight: 600;
     font-size: 0.95rem;
     transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -657,7 +685,7 @@ input:focus, select:focus {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(15, 23, 42, 0.4); /* Slate translucent overlay */
+    background-color: var(--bg-overlay); /* Themed neutral dark translucent overlay */
     backdrop-filter: blur(4px); /* Sleek backdrop blur */
     display: flex;
     align-items: center;
@@ -871,4 +899,110 @@ input:focus, select:focus {
 .delete-member-btn:hover {
     background-color: var(--danger);
     color: #ffffff;
+}
+
+/* Flatpickr Custom Theme Overrides (Inspired by NVIDIA) */
+.flatpickr-calendar {
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+    border-radius: var(--radius-md) !important;
+    font-family: var(--font-family) !important;
+}
+
+/* Month/Header styling */
+.flatpickr-months .flatpickr-month,
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+    color: var(--text-main) !important;
+    fill: var(--text-main) !important;
+}
+
+.flatpickr-current-month .numInputWrapper span.arrowUp:after {
+    border-bottom-color: var(--text-main) !important;
+}
+.flatpickr-current-month .numInputWrapper span.arrowDown:after {
+    border-top-color: var(--text-main) !important;
+}
+
+.flatpickr-current-month input.cur-year {
+    color: inherit !important;
+    background-color: transparent !important;
+    border: none !important;
+    font-weight: 600 !important;
+    font-family: var(--font-family) !important;
+}
+
+/* Month Dropdown Menu styling */
+.flatpickr-monthDropdown-months {
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    border: none !important;
+    font-family: var(--font-family) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    padding: 2px 6px !important;
+    border-radius: var(--radius-sm) !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    transition: var(--transition) !important;
+}
+
+.flatpickr-monthDropdown-months:hover {
+    background-color: var(--bg-hover) !important;
+}
+
+.flatpickr-monthDropdown-months option {
+    background-color: var(--bg-card) !important;
+    color: var(--text-main) !important;
+}
+
+/* Weekday names styling */
+span.flatpickr-weekday {
+    color: var(--text-muted) !important;
+    font-weight: 600 !important;
+}
+
+/* Day cells styling */
+.flatpickr-day {
+    color: var(--text-main) !important;
+    border-radius: var(--radius-sm) !important;
+    transition: var(--transition) !important;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+    background-color: var(--primary-light) !important;
+    color: var(--primary) !important;
+    border-color: var(--primary-light) !important;
+}
+
+/* Selected day styling */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: var(--text-on-primary) !important;
+}
+
+/* Today's day styling */
+.flatpickr-day.today {
+    border-color: var(--primary) !important;
+}
+.flatpickr-day.today:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--primary) !important;
+}
+
+/* Days in next/prev month */
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover,
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay {
+    color: var(--text-muted) !important;
+    opacity: 0.3;
 }

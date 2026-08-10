@@ -8,6 +8,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     </head>
     <body>
         <div class="app-shell">
@@ -157,11 +158,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="borrowStartDate">Start Date</label>
-                        <input id="borrowStartDate" type="date">
+                        <input id="borrowStartDate" type="text" placeholder="Select start date">
                     </div>
                     <div class="form-group">
                         <label for="borrowEndDate">End Date</label>
-                        <input id="borrowEndDate" type="date">
+                        <input id="borrowEndDate" type="text" placeholder="Select end date">
                     </div>
                 </div>
                 <div class="modal-actions">
@@ -205,6 +206,7 @@
             </div>
         </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
         <script src="script.js"></script>
     </body>
 </html>

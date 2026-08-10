@@ -2,7 +2,7 @@ const SERVER_URL = (typeof window !== "undefined" && window.__BACKEND_URL__) || 
 
 let messageTimeout;
 
-// Initialize Custom Select events
+// Initialize Custom Select and Date Picker events
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("borrowerSelectContainer");
     const trigger = document.getElementById("borrowerSelectTrigger");
@@ -20,6 +20,20 @@ document.addEventListener("DOMContentLoaded", () => {
             container.classList.remove("open");
         }
     });
+
+    // Initialize Flatpickr Date Picker
+    if (typeof flatpickr !== "undefined") {
+        flatpickr("#borrowStartDate", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            monthSelectorType: "static"
+        });
+        flatpickr("#borrowEndDate", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+            monthSelectorType: "static"
+        });
+    }
 });
 function showMessage(text) {
     const msgEl = document.getElementById("message");
