@@ -1067,3 +1067,195 @@ span.flatpickr-weekday {
     color: var(--text-muted) !important;
     opacity: 0.3;
 }
+
+/* Mobile Screen Responsiveness (max-width: 768px) */
+@media (max-width: 768px) {
+    /* Main structural layout changes */
+    .app-shell {
+        height: 100vh;
+    }
+    
+    .main-container {
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .header {
+        padding: 12px 16px;
+        height: 60px;
+    }
+
+    .app-logo {
+        font-size: 1.35rem;
+    }
+
+    .logo-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    /* Convert vertical sidebar to a fixed bottom navigation bar */
+    .sidebar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 68px;
+        flex-direction: row;
+        border-right: none;
+        border-top: 1px solid var(--border-color);
+        padding: 6px 8px;
+        z-index: 2000;
+        justify-content: space-around;
+        align-items: center;
+        background-color: var(--bg-card);
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .sidebar.collapsed {
+        width: 100% !important;
+        min-width: 100% !important;
+    }
+
+    /* Hide the vertical toggle button on mobile */
+    .toggle-btn {
+        display: none !important;
+    }
+
+    .menu {
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+        gap: 0;
+        margin: 0;
+    }
+
+    .menu-item {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 6px 4px;
+        font-size: 0.72rem;
+        gap: 4px;
+        flex: 1;
+        border-radius: var(--radius-sm);
+        text-align: center;
+        background-color: transparent;
+    }
+
+    .menu-item svg {
+        margin-right: 0;
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Force label visibility inside bottom navigation menu items */
+    .sidebar.collapsed .menu-item span,
+    .menu-item span {
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        font-size: 0.72rem !important;
+        font-weight: 700;
+    }
+
+    /* Adjust main content padding and ensure scrollbar clearance */
+    .content {
+        padding: 16px 16px 84px 16px; /* 84px bottom spacing to prevent navigation overlay overlaps */
+        overflow-y: auto;
+    }
+
+    /* Welcome Header adjustments */
+    .welcome-header {
+        margin-bottom: 20px;
+    }
+
+    .welcome-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 0.9rem;
+    }
+
+    /* Stack form containers */
+    .add-forms-container {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .form-card {
+        padding: 20px 16px;
+        border-radius: var(--radius-md);
+        max-width: 100%;
+    }
+
+    .form-card-header {
+        margin-bottom: 16px;
+    }
+
+    .form-card-header h3 {
+        font-size: 1.15rem;
+    }
+
+    .count-badge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    /* Enable horizontal scrolling for wide database tables */
+    .book-list {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 12px;
+        border-radius: var(--radius-sm);
+    }
+
+    .bookTable {
+        min-width: 600px; /* Force scrollable bounds so headers/columns align neatly */
+    }
+
+    .bookTable th,
+    .bookTable td {
+        padding: 10px 12px;
+        font-size: 0.82rem;
+        white-space: nowrap;
+    }
+
+    /* Compress table action buttons */
+    .borrow-book-btn,
+    .delete-book-btn,
+    .delete-member-btn,
+    .return-book-btn {
+        padding: 6px 10px !important;
+        font-size: 0.72rem !important;
+    }
+
+    /* Search bar container adjustments */
+    .search-bar-container {
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    /* Modal Dialog popup fit */
+    .modal-content {
+        padding: 20px 16px;
+        max-width: 92%;
+        border-radius: var(--radius-md);
+    }
+
+    .modal-content h3 {
+        font-size: 1.25rem;
+        margin-bottom: 12px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+}
